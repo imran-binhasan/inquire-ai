@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Internship Task - Appify Devs
 
-## Getting Started
+## Overview
 
-First, run the development server:
+This repository contains the solution to the Frontend Internship task for **Appify Devs**. The task required creating a basic UI with chat and history functionality, integrating the EchoGPT API, and deploying the project to GitHub, Vercel, or Netlify.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Technologies Used
+- **Next.js** (for building the frontend)
+- **ShadCN** (for UI components)
+- **TypeScript** (for type safety)
+- **EchoGPT API** (for chat functionality)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Task Breakdown
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Step 1: Frontend Design with Next.js and React (20 Marks)
+- Designed a **chat UI** and **history feature** using **Next.js** and **React**.
+- The design is different from the EchoGPT UI but retains similar functionality, including the ability to interact with a chat and view previous messages.
+- **ShadCN** components were used to style and structure the UI.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Step 2: API Integration (20 Marks)
+- Integrated the **EchoGPT API** for chat functionality.
+- Used API keys and followed the documentation from the [EchoGPT Platform](https://platform.echogpt.live/).
+- Enabled real-time chat by connecting the frontend to the backend using the provided API.
 
-## Learn More
+### Step 3: GitHub Submission & Deployment (20 Marks)
+- The project has been uploaded to **GitHub** and is publicly available for review.
+- The project is deployed on **Vercel** and can be accessed through the live link.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Live link : https://inquire-ai.vercel.app
