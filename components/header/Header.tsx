@@ -1,6 +1,7 @@
 "use client";
 import { UiContext } from "@/context/UiProvider";
 import { ChevronsRight,ChevronsLeft, Share } from "lucide-react"
+import Image from "next/image";
 import { useContext } from "react";
 
 
@@ -21,7 +22,7 @@ const Header = () => {
         <Share size={16} /> Share
       </button>
       <button>
-        <img className="w-8 h-8 rounded-full" src={"/user.png"} alt="logo" />
+        <Image width={32} height={32} className="rounded-full" src={"/user.png"} alt="logo" />
       </button>
       </div>
     </div>

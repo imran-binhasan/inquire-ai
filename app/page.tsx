@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { AudioLines, Paperclip, Send, Trash2 } from "lucide-react";
+import { AudioLines, Paperclip, Send } from "lucide-react";
 import Image from "next/image";
 import { UiContext } from "@/context/UiProvider";
 
@@ -30,7 +30,7 @@ const Home = () => {
     setMessage("");
     setChatStarted(true);
 
-    // Call EchoGPT API
+    // Call InquireAI API
     try {
       const response = await axios.post('https://api.echogpt.live/v1/chat/completions', {
         messages: [

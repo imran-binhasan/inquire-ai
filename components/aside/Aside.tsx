@@ -5,14 +5,18 @@ import {
   Share2, 
   HelpCircle, 
   MessageSquare,
-  Trash2,
   Plus,
-  Delete,
-  MessageSquareX,
   BadgeX
 } from "lucide-react";
 import Image from "next/image";
 import { useContext, useState, useEffect } from "react";
+
+interface ChatMessage {
+  id?: string;
+  text: string;
+  timestamp: string | number;
+  // Add any other properties your chat message might have
+}
 
 // Group chats by date
 const groupChatsByDate = (messages: ChatMessage[]) => {
@@ -39,7 +43,9 @@ export default function Aside() {
     startNewChat,
     loadSavedChat  
   } = useContext(UiContext);
-  
+
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [groupedChats, setGroupedChats] = useState<{ [key: string]: ChatMessage[] }>({});
 
   useEffect(() => {
@@ -116,14 +122,14 @@ export default function Aside() {
               "
             >
               <div 
-                className="flex h-6 items-center gap-3 flex-grow cursor-pointer"
+                className="flex h-6 items-center gap-2 cursor-pointer"
                 onClick={()=>loadSavedChat(chat.id)}
               >
                 <MessageSquare className="w-5 h-5 text-gray-500" />
                 <div>
-                  <p className="text-sm truncate max-w-[200px]">
-                    {chat.messages[0]?.text.slice(0, 50)}
-                    {chat.messages[0]?.text.length > 50 ? '...' : ''}
+                  <p className="text-sm truncate max-w-[140px]">
+                    {chat.messages[0]?.text.slice(0, 30)}
+                    {chat.messages[0]?.text.length > 30 ? '...' : ''}
                   </p>
                   <p className="text-xs text-gray-400">
                     {new Date(chat.timestamp).toLocaleTimeString()}
