@@ -1,72 +1,142 @@
+'use client';
+
+import { useContext, useState } from "react"; // Added useState import
 import { Input } from "@/components/ui/input";
-import { ScrollArea,ScrollBar } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { UiContext } from "@/context/UiProvider";
-import { AudioLines, Paperclip, Send} from "lucide-react";
+import { AudioLines, Paperclip, Send, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useContext } from "react";
+import { UiContext } from "@/context/UiProvider"; // Adjust import path as needed
+
 const Home = () => {
-  const {isSidebarOpen} = useContext(UiContext);
-  console.log(isSidebarOpen)
+  // Use context to access messages, OpenAI, and methods
+  const { messages, addMessage, openai } = useContext(UiContext);
+  
+  // Local state for current message input
+  const [message, setMessage] = useState<string>("");
+  const [chatStarted, setChatStarted] = useState<boolean>(messages.length > 0);
+
+  // Handle sending message
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    // Add user message using context method
+    addMessage({ 
+      sender: "user", 
+      text: message 
+    });
+
+    // Clear input field
+    setMessage("");
+    setChatStarted(true);
+
+    // Call OpenAI API
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: message }
+        ],
+        store: true
+      });
+
+      // Add AI response using context method
+      const aiResponse = completion.choices[0].message.content || "No response";
+      addMessage({ 
+        sender: "ai", 
+        text: aiResponse 
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Add error message
+      addMessage({ 
+        sender: "ai", 
+        text: "Sorry, there was an error processing your request." 
+      });
+    }
+  };
+
+  // Handle message input with Enter key
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
-    <>
+    <div className="mx-auto w-full md:w-3xl 2xl:w-4xl flex flex-col gap-10">
       {/* Chat container */}
-      <div className="mx-auto w-full md:w-3xl 2xl:w-4xl flex flex-col gap-10">
-        {/* Message */}
-        <div className="w-full">
-          <div className="h-92 overflow-y-auto border  p-3 space-y-2 w-full">
-            <div className="my-5 ">
+      <div className="w-full relative">
+        <div className="h-96 overflow-y-auto p-3 space-y-2 w-full">
+          {/* Conditionally render the greeting */}
+          {!chatStarted && (
+            <div className="my-5">
               <div className="font-medium text-center flex gap-2 justify-center">
-                {" "}
                 <Image src="logo.svg" width={25} height={25} alt="" />
-                <h3 className="text-2xl font-medium">Hi ! This is EchoGPT </h3>
+                <h3 className="text-2xl font-medium">Hi! This is InquireAI </h3>
               </div>
-              <p className=" text-center">How can i help you?</p>
+              <p className="text-center">How can I help you?</p>
             </div>
-          </div>
+          )}
+
+          {/* Display messages */}
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} mb-2`}
+            >
+              <p className="p-2 max-w-xs bg-gray-200 rounded-lg">{msg.text}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Input field */}
-        <div className=" border rounded-md p-2">
-         
-        <Textarea
-  className="w-full resize-none border-none max-h-24  scrollbar-none pb-1"
-  placeholder="Ask me anything..."
-  style={{
-    fontSize: "16px",
-    scrollbarColor: " blue", // Firefox
-   
-  }}
-/>
+        {/* Clear chat button */}
+        
+      </div>
 
-         
-          <div className=" flex justify-between gap-2 px-2 pt-2 w-full bottom-1">
-            
+      {/* Input field */}
+      <div className="border rounded-md p-2">
+        <Textarea
+          className="w-full resize-none border-none max-h-24 scrollbar-none pb-1"
+          placeholder="Ask me anything..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{
+            fontSize: "16px",
+            scrollbarColor: "blue", // Firefox
+          }}
+        />
+        <div className="flex justify-between gap-2 px-2 pt-2 w-full bottom-1">
+          <label
+            htmlFor="file-upload"
+            className="bottom-4 left-4 cursor-pointer text-gray-600"
+          >
+            <Paperclip size={24} />
+          </label>
+          <Input type="file" id="file-upload" className="hidden" />
+
+          <div className="flex gap-2 items-center">
             <label
               htmlFor="file-upload"
-              className=" bottom-4 left-4 cursor-pointer text-gray-600"
-            >
-              <Paperclip size={24} />
-            </label>
-            <Input type="file" id="file-upload" className="hidden" />
-
-           <div className="flex gap-2 items-center">
-           <label
-              htmlFor="file-upload"
-              className=" bottom-4 left-4 cursor-pointer text-gray-600"
+              className="bottom-4 left-4 cursor-pointer text-gray-600"
             >
               <AudioLines size={24} />
             </label>
             <Input type="file" id="file-upload" className="hidden" />
-            <Send className=" " />
-           </div>
+            <Send
+              className="cursor-pointer"
+              onClick={sendMessage}
+            />
           </div>
         </div>
-        <div>
-          <p className="text-center">Generated by AI</p>
-        </div>
       </div>
-    </>
+
+      <div>
+        <p className="text-center">Generated by AI</p>
+      </div>
+    </div>
   );
 };
 

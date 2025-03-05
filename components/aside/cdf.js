@@ -34,8 +34,7 @@ export default function Aside() {
     messages, 
     clearMessages,
     savedChats,
-    startNewChat,
-    loadSavedChat  
+    startNewChat  
   } = useContext(UiContext);
   
   const [groupedChats, setGroupedChats] = useState<{ [key: string]: ChatMessage[] }>({});
@@ -112,7 +111,7 @@ export default function Aside() {
             >
               <div 
                 className="flex items-center gap-3 flex-grow cursor-pointer"
-                onClick={()=>loadSavedChat(chat.id)}
+                onClick={}
               >
                 <MessageSquare className="w-5 h-5 text-gray-500" />
                 <div>

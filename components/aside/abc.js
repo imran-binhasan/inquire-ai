@@ -33,9 +33,7 @@ export default function Aside() {
     setIsSidebarOpen, 
     messages, 
     clearMessages,
-    savedChats,
-    startNewChat,
-    loadSavedChat  
+    startNewChat  
   } = useContext(UiContext);
   
   const [groupedChats, setGroupedChats] = useState<{ [key: string]: ChatMessage[] }>({});
@@ -93,7 +91,21 @@ export default function Aside() {
 
         {/* Chat History Section */}
         <div className="mt-6">
-         <h3>History</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <History className="w-5 h-5" />
+              Chat History
+            </h3>
+            {messages.length > 0 && (
+              <button 
+                onClick={() => clearMessages()}
+                className="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm"
+              >
+                <Trash2 size={16} />
+                Clear All
+              </button>
+            )}
+          </div>
           <div className="flex-grow overflow-y-auto">
         {savedChats.length === 0 ? (
           <p className="text-center text-gray-500">No chat history</p>
@@ -112,7 +124,7 @@ export default function Aside() {
             >
               <div 
                 className="flex items-center gap-3 flex-grow cursor-pointer"
-                onClick={()=>loadSavedChat(chat.id)}
+                // Add method to load saved chat
               >
                 <MessageSquare className="w-5 h-5 text-gray-500" />
                 <div>
@@ -126,7 +138,7 @@ export default function Aside() {
                 </div>
               </div>
               <button 
-                onClick={() => clearMessages(chat.id)}
+                onClick={() => removeSavedChat(chat.id)}
                 className="text-red-500 hover:text-red-700 ml-2"
               >
                 <Trash2 size={16} />
@@ -136,7 +148,40 @@ export default function Aside() {
         )}
       </div>
 
-          
+          <div className="mt-4 space-y-4">
+            {Object.entries(groupedChats).map(([date, chats]) => (
+              <div key={date}>
+                <h4 className="text-sm text-gray-500 mb-2">{date}</h4>
+                <div className="space-y-2">
+                  {chats.filter((msg, index, self) => 
+                    index === self.findIndex((t) => t.sender === 'user')
+                  ).map((msg) => (
+                    <div 
+                      key={msg.id}
+                      className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition-colors border"
+                    >
+                      <MessageSquare className="w-5 h-5 text-gray-500" />
+                      <div>
+                        <p className="text-sm truncate max-w-[200px]">
+                          {msg.text.slice(0, 50)}
+                          {msg.text.length > 50 ? '...' : ''}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(msg.timestamp).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      <button onClick={() => clearMessages(msg.id)} className="text-red-500 hover:text-red-700">
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {messages.length === 0 && (
+              <p className="text-center text-gray-500">No chat history</p>
+            )}
+          </div>
         </div>
       </nav>
 

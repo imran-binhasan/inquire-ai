@@ -1,11 +1,12 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-import LayoutWrapper from "@/components/layout/LayoutWrapper"; // Updated import
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import UiProvider from "@/context/UiProvider";
 
 export const metadata: Metadata = {
-  title: "EchoChat",
-  description: "AI Chatbot with EchoGPT",
+  title: "InquireAI",
+  description: "AI Chatbot with InquireAI",
 };
 
 export default function RootLayout({
