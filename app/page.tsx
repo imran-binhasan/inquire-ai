@@ -70,10 +70,10 @@ const Home = () => {
   };
 
   return (
-    <div className="mx-auto w-full md:w-3xl 2xl:w-4xl flex flex-col md:gap-6">
+    <div className="mx-auto w-full md:w-3xl 2xl:w-4xl flex flex-col md:gap-6 ">
       {/* Chat container */}
       <div className="w-full relative">
-        <div className="h-[65vh] md:min-h-96 overflow-y-auto p-3 space-y-2 w-full">
+        <div className="h-[calc(100vh-210px)]  md:h-[calc(100vh-250px)] overflow-y-auto p-3 space-y-2 w-full">
           {/* Conditionally render the greeting */}
           {!chatStarted && (
             <div className="my-5">
