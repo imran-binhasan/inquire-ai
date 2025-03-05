@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from "react";
-import OpenAI from "openai";
+import axios from "axios";
 
 // Define message type
 export interface ChatMessage {
@@ -23,11 +23,10 @@ interface UiContextType {
   setIsSidebarOpen: (isOpen: boolean) => void;
   messages: ChatMessage[];
   addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
-  clearMessages: () => void;
+  clearMessages: (chatId: string) => void;
   startNewChat: () => void;
   savedChats: SavedChat[];
   loadSavedChat: (chatId: string) => void;
-  openai: OpenAI;
 }
 
 export const UiContext = createContext<UiContextType>({
@@ -38,28 +37,40 @@ export const UiContext = createContext<UiContextType>({
   clearMessages: () => {},
   startNewChat: () => {},
   savedChats: [],
-  loadSavedChat: () => {},
-  openai: new OpenAI({
-    apiKey: "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",
-    dangerouslyAllowBrowser: true
-  })
+  loadSavedChat: () => {}
 });
 
 const UiProvider = ({ children }: { children: React.ReactNode }) => {
   // Sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Initialize OpenAI client
-  const openai = new OpenAI({
-    apiKey: "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",
-    dangerouslyAllowBrowser: true
-  });
-
   // Messages state
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   
   // Saved chats state
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
+
+  // Load current chat messages on initial render
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedMessages = localStorage.getItem('currentChatMessages');
+      if (savedMessages) {
+        try {
+          const parsedMessages = JSON.parse(savedMessages);
+          setMessages(parsedMessages);
+        } catch (error) {
+          console.error('Error parsing saved messages', error);
+        }
+      }
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currentChatMessages', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   // Effect to load saved chats from localStorage on client-side
   useEffect(() => {
@@ -101,12 +112,13 @@ const UiProvider = ({ children }: { children: React.ReactNode }) => {
       // Return the updated chats to update the state
       return updatedChats;
     });
+
+    // Also clear current messages from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentChatMessages');
+      setMessages([]);
+    }
   };
-  
-  
-  
-  
-  
 
   // Load a saved chat
   const loadSavedChat = (chatId: string) => {
@@ -114,6 +126,26 @@ const UiProvider = ({ children }: { children: React.ReactNode }) => {
     if (savedChat) {
       // Clear current messages and load saved chat messages
       setMessages(savedChat.messages);
+      if (messages.length > 0) {
+        // Check if any message's id already exists in savedChats
+        const existingMessageIds = savedChats.flatMap(chat => chat.messages.map(msg => msg.id));
+        const hasDuplicate = messages.some(msg => existingMessageIds.includes(msg.id));
+    
+        // If no duplicate message ID exists, save the chat
+        if (!hasDuplicate) {
+          const newSavedChat: SavedChat = {
+            id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            messages: [...messages],
+            timestamp: Date.now()
+          };
+    
+          // Add the new chat to saved chats and limit it to the last 10 chats
+          setSavedChats(prevChats => {
+            const updatedChats = [newSavedChat, ...prevChats].slice(0, 10);
+            return updatedChats;
+          });
+        }
+      }
     }
   };
 
@@ -141,10 +173,12 @@ const UiProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
   
-    // Explicitly clear messages after saving
+    // Explicitly clear messages and localStorage after saving
     setMessages([]);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentChatMessages');
+    }
   };
-  
 
   // Combine all states and methods
   const uiStates = { 
@@ -155,8 +189,7 @@ const UiProvider = ({ children }: { children: React.ReactNode }) => {
     clearMessages,
     startNewChat,
     savedChats,
-    loadSavedChat,
-    openai
+    loadSavedChat
   };
 
   return (

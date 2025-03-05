@@ -21,7 +21,7 @@ const Header = () => {
         <Share size={16} /> Share
       </button>
       <button>
-        <img className="w-8 h-8 rounded-full" src={"/logo.svg"} alt="logo" />
+        <img className="w-8 h-8 rounded-full" src={"/user.png"} alt="logo" />
       </button>
       </div>
     </div>

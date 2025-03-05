@@ -1,15 +1,17 @@
 import { UiContext } from "@/context/UiProvider";
 import { 
   ChevronsLeft, 
-  Clock, 
-  History, 
   Settings, 
   Share2, 
   HelpCircle, 
   MessageSquare,
   Trash2,
-  Plus
+  Plus,
+  Delete,
+  MessageSquareX,
+  BadgeX
 } from "lucide-react";
+import Image from "next/image";
 import { useContext, useState, useEffect } from "react";
 
 // Group chats by date
@@ -70,7 +72,10 @@ export default function Aside() {
   return (
     <aside className="h-full p-4 flex flex-col">
       <div className="flex justify-between items-center gap-2 mb-6">
-        <h2 className="text-xl font-bold">AI Chat</h2>
+       <div className="flex items-center gap-2">
+       <Image src={'/logo.png'} width={25} height={25} alt="logo"/>
+       <h2 className="text-lg font-medium">InquireAI</h2>
+       </div>
         <ChevronsLeft 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
           className="block sm:hidden cursor-pointer" 
@@ -93,7 +98,7 @@ export default function Aside() {
 
         {/* Chat History Section */}
         <div className="mt-6">
-         <h3>History</h3>
+         <h3 className="font-medium text-lg my-2">History</h3>
           <div className="flex-grow overflow-y-auto">
         {savedChats.length === 0 ? (
           <p className="text-center text-gray-500">No chat history</p>
@@ -111,7 +116,7 @@ export default function Aside() {
               "
             >
               <div 
-                className="flex items-center gap-3 flex-grow cursor-pointer"
+                className="flex h-6 items-center gap-3 flex-grow cursor-pointer"
                 onClick={()=>loadSavedChat(chat.id)}
               >
                 <MessageSquare className="w-5 h-5 text-gray-500" />
@@ -129,7 +134,7 @@ export default function Aside() {
                 onClick={() => clearMessages(chat.id)}
                 className="text-red-500 hover:text-red-700 ml-2"
               >
-                <Trash2 size={16} />
+                <BadgeX size={20} className="cursor-pointer text-gray-700"/>
               </button>
             </div>
           ))
@@ -141,7 +146,7 @@ export default function Aside() {
       </nav>
 
       <div className="mt-4 border-t pt-4 text-sm text-gray-500">
-        <p>© 2024 AI Chat</p>
+        <p>© 2025 Inquire AI</p>
       </div>
     </aside>
   );
